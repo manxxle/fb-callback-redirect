@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook Callback</title>
+    <meta charset="UTF-8" />
+    <script>
+        window.onload = function () {
+            const hash = window.location.hash.substring(1); // rimuove il #
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
 
+            if (token) {
+                fetch('http://localhost:12345/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                }).then(() => {
+                    document.body.innerHTML = "<h3>Accesso effettuato. Puoi chiudere la finestra.</h3>";
+                }).catch(() => {
+                    document.body.innerHTML = "<h3>Errore durante l'invio del token.</h3>";
+                });
+            } else {
+                document.body.innerHTML = "<h3>Accesso annullato o fallito.</h3>";
+                fetch('http://localhost:12345/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: "" }) // token vuoto
+                });
+            }
+        };
+    </script>
+</head>
+<body>
+    <p>Attendi l'elaborazione del login...</p>
+</body>
+</html>
