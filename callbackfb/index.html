@@ -1,40 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Facebook Callback</title>
-    <meta charset="UTF-8" />
-    <script>
-        window.onload = function () {
-            const hash = window.location.hash.substring(1); // rimuove il #
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-
-            if (token) {
-                fetch('http://localhost:12345/token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ token })
-                }).then(() => {
-                    document.body.innerHTML = "<h3>Accesso effettuato. Puoi chiudere la finestra.</h3>";
-                }).catch(() => {
-                    document.body.innerHTML = "<h3>Errore durante l'invio del token.</h3>";
-                });
-            } else {
-                document.body.innerHTML = "<h3>Accesso annullato o fallito.</h3>";
-                fetch('http://localhost:12345/token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ token: "" }) // token vuoto
-                });
-            }
-        };
-    </script>
+  <title>Facebook Callback</title>
 </head>
 <body>
-    <p>Attendi l'elaborazione del login...</p>
+  <script>
+    // Estrae il token dalla URL (es. #access_token=...)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token=')) {
+      const token = hash.split('access_token=')[1].split('&')[0];
+      // Manda il token alla tua app desktop via custom protocol o polling (vedi sotto)
+      window.location = 'myapp://auth?token=' + token; // <-- custom URI scheme
+    } else {
+      document.body.innerText = "Accesso annullato o fallito.";
+    }
+  </script>
 </body>
 </html>
